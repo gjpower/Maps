@@ -2,15 +2,13 @@ package ie.tcd.pubcrawl;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -27,18 +25,12 @@ import android.widget.Toast;
 
 public class ThirdActivity extends android.support.v4.app.FragmentActivity implements LocationListener{
 
-	private int numpub = 1;
+	private int numpub = 2;
 	private Marker[] marker = new Marker[numpub]; 
     private GoogleMap mMap;
     private LocationManager locationManager;
     private String provider;
     private UiSettings mUiSettings;
-    public LatLngBounds bounds;
-    public final double latitude = 54;
-    public final double longitude = -5.9;
-    public LatLngBounds pubsnme;
-    public LatLng pubs = new LatLng(latitude, longitude);
-    public LatLng pubs1 = new LatLng(latitude, longitude);
     public LatLng myloc;
     public LatLng[] allpubs = new LatLng[numpub];
 
@@ -46,15 +38,10 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
      	setContentView(R.layout.third);
-     	Log.i("user", "on create");
         setUpMapIfNeeded();
-        Log.i("user", "map set up");
         getpublocations();
-        Log.i("user", "got locations");
         makeMarkers();
-        Log.i("user", "made markers");
         init();
-        Log.i("user", "init");
         //doSomething();  
           
         } 
@@ -63,8 +50,8 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
     	for(int i=0; i < numpub; i++){
     		Marker tempmarker = mMap.addMarker(new MarkerOptions()
     	      .position(allpubs[i])
-    	      .title("pub.title")
-    	      .snippet("pub.info and shiit"));
+    	      .title("Messrs Maguire")
+    	      .snippet("Touch for Directions"));
     		marker[i] = tempmarker;
     		marker[i].showInfoWindow();
     	}
@@ -72,15 +59,20 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
 	}
 
 	private void getpublocations() {
+		//String strlat, strlng;
+		String[] testlat = new String[numpub];
+		String[] testlng = new String[numpub];
+		testlat[0] = "53.3439208";
+		testlng[0] = "-6.2607184";
+		testlat[1] = "53.347001626 ";
+		testlng[1] = "-6.258100569";
+		double templat, templng;
 		for(int i=0; i < numpub; i++){
-			String strlat, strlng;
-			double templat, templng;
 			//get strings from pub managment
-			Log.i("user", "for loop");
-			strlat = "52.756765";
-			strlng = "-6.6218";
-			templat = Double.parseDouble(strlat);
-			templng = Double.parseDouble(strlng);
+			//strlat = "53.3439208";
+			//strlng = "-6.2607184";
+			templat = Double.parseDouble(testlat[i]);
+			templng = Double.parseDouble(testlng[i]);
 			allpubs[i] = new LatLng(templat, templng);
 		}
 	}
@@ -102,18 +94,15 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
           if (location != null) {
             System.out.println("Provider " + provider + " has been selected.");
             onLocationChanged(location);}
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(pubsnme, 500, 500, 10));
             location = locationManager.getLastKnownLocation(provider);
             onLocationChanged(location);
-           /* 
-            mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+            
+            mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 
-				@Override
-				public boolean onMarkerClick(Marker arg0) {
+				public void onInfoWindowClick(Marker arg0) {
 					getDirections(arg0);
-					return false;
 				}
-            });*/
+            });
     }
     
     
@@ -126,7 +115,6 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
         provider = locationManager.getBestProvider(criteria, false);
         Location location = locationManager.getLastKnownLocation(provider);
         onLocationChanged(location);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(pubsnme, 500, 500, 10));
     }
 
  
@@ -148,13 +136,13 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
     	double lng = (double) (location.getLongitude());
     	myloc = new LatLng(lat, lng);
     	setUpMap(lat, lng);
-    	
-    	LatLngBounds temp = new LatLngBounds(new LatLng(lat, lng), pubs);
-    	pubsnme = temp;   
     	Log.i("user", "location changed");
-    	mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(pubsnme, 500, 500, 10));
+    	if(allpubs[0]!=null)
+        	mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(allpubs[0], 14));
+        else
+        	mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myloc, 14));
     	Log.i("user", "move camera");
-    	Toast.makeText(this, " latitude " + lat + "longditude" + lng, Toast.LENGTH_SHORT).show(); 
+    	Toast.makeText(this, "latitude " + lat + " longditude " + lng, Toast.LENGTH_SHORT).show(); 
     }
     
     
