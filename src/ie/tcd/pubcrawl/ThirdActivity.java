@@ -1,14 +1,5 @@
 package ie.tcd.pubcrawl;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -23,6 +14,17 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 public class ThirdActivity extends android.support.v4.app.FragmentActivity implements LocationListener{
 
 	private int numpub = 2;
@@ -33,15 +35,21 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
     private UiSettings mUiSettings;
     public LatLng myloc;
     public LatLng[] allpubs = new LatLng[numpub];
+    public CustomInfoAdapter cia = new CustomInfoAdapter(this);
+    private BitmapDescriptor icon;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
      	setContentView(R.layout.third);
         setUpMapIfNeeded();
+        icon = BitmapDescriptorFactory.fromResource(R.drawable.beer28);
         getpublocations();
         makeMarkers();
         init();
+/*        infoWindow=getLayoutInflater().inflate(R.layout.info_window_layout, null);
+*/        mMap.setOnInfoWindowClickListener(null);
         //doSomething();  
           
         } 
@@ -51,7 +59,8 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
     		Marker tempmarker = mMap.addMarker(new MarkerOptions()
     	      .position(allpubs[i])
     	      .title("Messrs Maguire")
-    	      .snippet("Touch for Directions"));
+    	      .snippet("Touch for Directions")
+    		  .icon(icon));
     		marker[i] = tempmarker;
     		marker[i].showInfoWindow();
     	}
@@ -150,6 +159,7 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mMap.setMyLocationEnabled(true);
         mUiSettings = mMap.getUiSettings();
+        mMap.setInfoWindowAdapter(cia);
     }
     
     private void getDirections(Marker mark){
