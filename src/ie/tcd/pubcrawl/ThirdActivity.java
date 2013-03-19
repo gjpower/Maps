@@ -44,7 +44,7 @@ public class ThirdActivity extends android.support.v4.app.FragmentActivity imple
         super.onCreate(savedInstanceState);
      	setContentView(R.layout.third);
         setUpMapIfNeeded();
-        icon = BitmapDescriptorFactory.fromResource(R.drawable.beer28);
+        icon = BitmapDescriptorFactory.fromResource(R.drawable.icon);
         getpublocations();
         makeMarkers();
         init();
